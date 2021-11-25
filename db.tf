@@ -1,5 +1,5 @@
 resource "aws_db_subnet_group" "week13-db-subnet-group" {
-  name       = "wee12-db-subnet-group"
+  name       = "week13-db-subnet-group"
   subnet_ids = [aws_subnet.week13-pri-a.id, aws_subnet.week13-pri-b.id]
 
   tags = {

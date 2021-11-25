@@ -59,61 +59,20 @@ data "aws_iam_policy_document" "lambda-iam-policy" {
       "*"
     ]
   }
-}
 
-# Brando addition start 
-#data "aws_iam_policy_document" "lambda-iam-policy-1" {
-#  statement {
-#    sid    = "Week10LambdaS3"
-#    effect = "Allow"
-#    actions = [
-#      "s3:GetObject"
-#    ]
-#    resources = [
-#      "${aws_s3_bucket.ece592-week13-brando.arn}/*"
-#    ]
-#  }
-#}
-
-data "aws_iam_policy_document" "lambda-iam-policy-2" {
   statement {
-    sid    = "Week10LambdaKms"
+    sid = "Week13LambdaEc2"
     effect = "Allow"
     actions = [
-      "kms:Decrypt"
-    ]
-    resources = [
-      "aws_kms_key.week13-kms.arn"
-    ]
-  }
-}
-
-data "aws_iam_policy_document" "lambda-iam-policy-3" {
-  statement {
-    sid    = "Week10LambdaEc2"
-    effect = "Allow"
-    actions = [
-      "ec2:DescribeInstances"
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface"
     ]
     resources = [
       "*"
     ]
   }
 }
-
-data "aws_iam_policy_document" "lambda-iam-policy-4" {
-  statement {
-    sid    = "Week10LambdaTags"
-    effect = "Allow"
-    actions = [
-      "ec2:DeleteTags", "ec2:CreateTags"
-    ]
-    resources = [
-      "arn:aws:ec2:us-east-1:*:instance/*"
-    ]
-  }
-}
-# Brando addition end 
 
 # Now that we've defined the *contents* of our policy let's create the
 # actual resource.
@@ -135,24 +94,24 @@ resource "aws_iam_role_policy_attachment" "week13-lambda-automation-role" {
 }
 
 
-#resource "aws_lambda_function" "lambda" {
-#  # This file contains the code for our Lambda.
-#  filename      = "lambda_code.zip"
-#  function_name = "week13-lambda"
-#  role          = aws_iam_role.lambda-iam-role.arn
-#
-#  # This is the name of the file followed by the name of the function.
-#  handler = "lambda_code.lambda_handler"
-#
-#  # This tells Terraform whether the code has changed or not.
-#  source_code_hash = filebase64sha256("lambda_code.zip")
-#
-#  runtime = "python3.9"
-#  timeout = 10
-#
-#  environment {
-#    variables = {
-#      week = "week13"
-#    }
-#  }
-#}
+resource "aws_lambda_function" "lambda" {
+  # This file contains the code for our Lambda.
+  filename      = "lambda_code.zip"
+  function_name = "week13-lambda"
+  role          = aws_iam_role.lambda-iam-role.arn
+
+  # This is the name of the file followed by the name of the function.
+  handler = "lambda_code.lambda_handler"
+
+  # This tells Terraform whether the code has changed or not.
+  source_code_hash = filebase64sha256("lambda_code.zip")
+
+  runtime = "python3.9"
+  timeout = 10
+
+  environment {
+    variables = {
+      week = "week13"
+    }
+  }
+}

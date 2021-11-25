@@ -114,4 +114,28 @@ resource "aws_lambda_function" "lambda" {
       week = "week13"
     }
   }
+
+  vpc_config {
+    # Every subnet should be able to reach an EFS mount target in the same Availability Zone. Cross-AZ mounts are not permitted.
+    subnet_ids         = [aws_subnet.week13-pri-a.id, aws_subnet.week13-pri-b.id]
+    security_group_ids = [aws_security_group.week13-ssh-sg-v2.id]
+  }
+}
+
+resource "aws_default_security_group" "week13-def-sg" {
+  vpc_id = aws_vpc.week13-vpc.id
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }

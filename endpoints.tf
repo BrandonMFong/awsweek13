@@ -9,7 +9,7 @@ resource "aws_security_group" "week13-https-sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = []
+    cidr_blocks = [aws_vpc.week13-vpc.cidr_block]
 
     # Suggested by professor
     ipv6_cidr_blocks = []

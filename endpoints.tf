@@ -14,7 +14,7 @@ resource "aws_security_group" "week13-https-sg" {
     # Suggested by professor
     ipv6_cidr_blocks = []
     prefix_list_ids  = []
-    security_groups  = []
+    security_groups  = [aws_security_group.week13-ssh-sg-v2.id]
     self             = false
   }]
 
@@ -37,7 +37,21 @@ resource "aws_security_group" "week13-https-sg" {
   }
 }
 
-output "week13-rds-endpoint" {
-  value = aws_rds_cluster.week13-rds.endpoint
+# EC2
+resource "aws_vpc_endpoint" "week13-sm-ep" {
+  vpc_id            = aws_vpc.week13-vpc.id
+  service_name      = "com.amazonaws.us-east-1.secretsmanager"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [aws_subnet.week13-pri-a.id, aws_subnet.week13-pri-b.id]
+
+  security_group_ids = [
+    aws_security_group.week13-https-sg.id,
+  ]
+
+  private_dns_enabled = true
+
+  tags = {
+    Environment = "EC2 Endpoint"
+  }
 }
 
